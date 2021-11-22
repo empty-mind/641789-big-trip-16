@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Pavel Kuznetsov](https://up.htmlacademy.ru/ecmascript/16/user/641789).
-* Наставник: `Неизвестно`.
+* Наставник: [Антон Попов](https://htmlacademy.ru/profile/joker).
 
 ---
 
