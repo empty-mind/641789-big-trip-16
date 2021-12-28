@@ -1,17 +1,15 @@
-import {TRIP_EVENT_COUNT} from './utils/const.js';
+import {render, RenderPosition} from './utils/render.js';
+import TripInfoView from './view/trip-info-view.js';
+import SiteMenuView from './view/site-menu-view.js';
+import FilterTripEventsView from './view/filter-trip-events-view.js';
+import SortTripEventsView from './view/sort-trip-events-view.js';
+import ItemTripEventsView from './view/item-trip-events-view.js';
+import ListTripEventsView from './view/list-trip-events-view.js';
+import EditTripEventFormView from './view/edit-trip-event-form-view.js';
+import NewTripEventFormView from './view/new-trip-event-form-view.js';
 
-import {renderTemplate, RenderPosition} from './utils/render.js';
-import {createTripInfoTemplate} from './view/trip-info-view.js';
-import {createSiteMenuTemplate} from './view/site-menu-view.js';
-import {createFilterTripEventsTemplate} from './view/filter-trip-events-view.js';
-import {createSortTripEventsTemplate} from './view/sort-trip-events-view.js';
-import {createItemTripEventsTemplate} from './view/item-trip-events-view.js';
-import {createListTripEventsTemplate} from './view/list-trip-events-view.js';
-import {createEditPointFormTemplate} from './view/edit-point-form-view.js';
-import {createNewPointFormTemplate} from './view/new-point-form-view.js';
-
-// mock data
-import {pointsDataMockArray} from './mock/point.js';
+import {TRIP_EVENT_COUNT} from './mock/const.js';
+import {tripEventsDataMockArray} from './mock/trip-events.js';
 
 const siteHeaderElement = document.querySelector('.page-header');
 const tripInfoElement = document.querySelector('.trip-main');
@@ -20,23 +18,48 @@ const filterTripEventsElement = siteHeaderElement.querySelector('.trip-controls_
 const sortTripEventsElement = document.querySelector('.trip-events');
 const listTripEventsElement = document.querySelector('.trip-events');
 
-const renderTripEvents = () => {
-  let tripEvents = '';
+render(tripInfoElement, new TripInfoView(tripEventsDataMockArray).element, RenderPosition.AFTERBEGIN);
+render(siteMenuElement, new SiteMenuView().element);
+render(filterTripEventsElement, new FilterTripEventsView().element);
+render(sortTripEventsElement, new SortTripEventsView().element);
 
-  for (let index = 1; index < TRIP_EVENT_COUNT - 1; index++) {
-    tripEvents += createItemTripEventsTemplate(pointsDataMockArray[index]);
-  }
+const listTripEventsComponent = new ListTripEventsView();
+render(listTripEventsElement, listTripEventsComponent.element);
 
-  return `${createEditPointFormTemplate(pointsDataMockArray[0])}
-    ${tripEvents}
-    ${createNewPointFormTemplate(pointsDataMockArray[TRIP_EVENT_COUNT - 1])}`;
+const renderTripEvent = (ripEventsListElement, itemTripEvent) => {
+  const tripEventComponent = new ItemTripEventsView(itemTripEvent);
+  const tripEventEditComponent = new EditTripEventFormView(itemTripEvent);
+
+  const replateItemTripEventToEditTripEventForm = () => {
+    ripEventsListElement.replaceChild(tripEventEditComponent.element, tripEventComponent.element);
+  };
+
+  const replaceEditTripEventFormToItemTripEvent = () => {
+    ripEventsListElement.replaceChild(tripEventComponent.element, tripEventEditComponent.element);
+  };
+
+  tripEventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replateItemTripEventToEditTripEventForm();
+  });
+
+  tripEventEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceEditTripEventFormToItemTripEvent();
+  });
+
+  tripEventEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceEditTripEventFormToItemTripEvent();
+  });
+
+  render(ripEventsListElement, tripEventComponent.element);
 };
 
-renderTemplate(tripInfoElement, createTripInfoTemplate(pointsDataMockArray), RenderPosition.AFTERBEGIN);
-renderTemplate(siteMenuElement, createSiteMenuTemplate());
-renderTemplate(filterTripEventsElement, createFilterTripEventsTemplate());
-renderTemplate(sortTripEventsElement, createSortTripEventsTemplate());
-renderTemplate(listTripEventsElement, createListTripEventsTemplate(renderTripEvents));
+for (let index = 0; index < TRIP_EVENT_COUNT; index++) {
+  renderTripEvent(listTripEventsComponent.element, tripEventsDataMockArray[index]);
+}
+
+// форма добавления новой точки марштура - пока просто добавлена в конец списка
+render(listTripEventsComponent.element, new NewTripEventFormView(tripEventsDataMockArray[tripEventsDataMockArray.length - 1]).element);
 
 /*
 // empty - temp position

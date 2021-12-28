@@ -1,5 +1,27 @@
-export const createEmptyTripEventsTemplate = () => (
+import {createElement} from '../utils/render';
+
+const createEmptyTripEventsTemplate = () => (
   `<p class="trip-events__msg">
     Click New Event to create your first point
   </p>`
 );
+
+export default class EmptyTripEventsView {
+  #element = null;
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createEmptyTripEventsTemplate();
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

@@ -1,9 +1,10 @@
-import {getRandomInteger} from '../utils/get-random-integer.js';
-import {MIN_OFFERS_COUNT, MAX_OFFERS_COUNT} from '../utils/const.js';
 import dayjs from 'dayjs';
+import {createElement} from '../utils/render';
+import {MIN_OFFERS_COUNT, MAX_OFFERS_COUNT} from '../mock/const.js';
+import {getRandomInteger} from '../mock/get-random-integer.js';
 
-export const createItemTripEventsTemplate = (point) => {
-  const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type, icon} = point;
+const createItemTripEventsTemplate = (tripEvent) => {
+  const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type, icon} = tripEvent;
 
   const favoriteClassName = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
@@ -12,7 +13,6 @@ export const createItemTripEventsTemplate = (point) => {
   const renderDurationTime = () => {
     let result = '';
 
-    // на основе своих знаний не придумал лучше способа как посчитать и отформатировать временной промежуток
     /* eslint-disable */
     const duration = require('dayjs/plugin/duration');
     dayjs.extend(duration);
@@ -90,3 +90,28 @@ export const createItemTripEventsTemplate = (point) => {
     </div>
   </li>`;
 };
+
+export default class ItemTripEventsView {
+  #element = null;
+  #tripEvent = null;
+
+  constructor(tripEvent) {
+    this.#tripEvent = tripEvent;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createItemTripEventsTemplate(this.#tripEvent);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

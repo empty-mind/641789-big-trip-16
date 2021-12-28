@@ -1,17 +1,19 @@
-export const createTripInfoTemplate = (dataArray) => {
-  const renderTripInfotitle = () => {
-    const firstPoint = dataArray[0].destination.name;
-    const secondPoint = dataArray[1].destination.name;
-    const lastPoint = dataArray[dataArray.length - 2].destination.name;
+import {createElement} from '../utils/render';
+
+const createTripInfoTemplate = (dataArray) => {
+  const renderTripInfoTitle = () => {
+    const firstTripEvent = dataArray[0].destination.name;
+    const secondTripEvent = dataArray[1].destination.name;
+    const lastTripEvent = dataArray[dataArray.length - 2].destination.name;
 
     if (dataArray.length < 3) {
-      return `<h1 class="trip-info__title">${firstPoint} &mdash; ${lastPoint}</h1>`;
+      return `<h1 class="trip-info__title">${firstTripEvent} &mdash; ${lastTripEvent}</h1>`;
     }
     if (dataArray.length === 3) {
-      return `<h1 class="trip-info__title">${firstPoint} &mdash; ${secondPoint} &mdash; ${lastPoint}</h1>`;
+      return `<h1 class="trip-info__title">${firstTripEvent} &mdash; ${secondTripEvent} &mdash; ${lastTripEvent}</h1>`;
     }
 
-    return `<h1 class="trip-info__title">${firstPoint} &mdash; ... &mdash; ${lastPoint}</h1>`;
+    return `<h1 class="trip-info__title">${firstTripEvent} &mdash; ... &mdash; ${lastTripEvent}</h1>`;
   };
 
   const renderTripInfoDates = () => (
@@ -33,7 +35,7 @@ export const createTripInfoTemplate = (dataArray) => {
 
   return `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
-      ${renderTripInfotitle()}
+      ${renderTripInfoTitle()}
       ${renderTripInfoDates()}
     </div>
 
@@ -42,3 +44,28 @@ export const createTripInfoTemplate = (dataArray) => {
     </p>
   </section>`;
 };
+
+export default class TripInfoView {
+  #element = null;
+  #tripEvents = null;
+
+  constructor(dataArray) {
+    this.#tripEvents = dataArray;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTripInfoTemplate(this.#tripEvents);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
