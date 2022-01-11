@@ -1,4 +1,6 @@
-export const createFilterTripEventsTemplate = () => (
+import {createElement} from '../utils/render';
+
+const createFilterTripEventsTemplate = () => (
   `<form class="trip-filters" action="#" method="get">
     <div class="trip-filters__filter">
       <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
@@ -18,3 +20,23 @@ export const createFilterTripEventsTemplate = () => (
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`
 );
+
+export default class FilterTripEventsView {
+  #element = null;
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFilterTripEventsTemplate();
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

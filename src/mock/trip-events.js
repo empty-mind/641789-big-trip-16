@@ -2,11 +2,11 @@
 // !ATTENTION - MAGIC NUMBERS AND DRY!
 
 import dayjs from 'dayjs';
-import {TRIP_EVENT_COUNT} from '../utils/const.js';
-import {getRandomInteger} from '../utils/get-random-integer.js';
+import {TRIP_EVENT_COUNT} from './const.js';
+import {getRandomInteger} from './get-random-integer.js';
 
 const generateDate = () => {
-  const maxMinuteGap = 7200; // 5 days
+  const maxMinuteGap = 5 * 24 * 60; // 5 days
   const minuteGap = getRandomInteger(-maxMinuteGap, maxMinuteGap);
 
   return dayjs().add(minuteGap, 'm');
@@ -15,7 +15,7 @@ const generateDate = () => {
 const generateDateFrom = () => generateDate();
 
 const generateDateTo = (date) => {
-  const maxMinuteGap = 7200; // 5 days
+  const maxMinuteGap = 5 * 24 * 60; // 5 days
   const minuteGap = getRandomInteger(1, maxMinuteGap);
 
   return dayjs(date).add(minuteGap, 'm');
@@ -54,29 +54,18 @@ const generateDestinationCity = () => {
 };
 
 const generatePictures = () => {
-  const pictures = [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: generateDescription(),
-    },
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: generateDescription(),
-    },    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: generateDescription(),
-    },
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: generateDescription(),
-    },
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: generateDescription(),
-    },
-  ];
+  const result = [];
 
-  return pictures;
+  for (let index = 1; index <= 5; index++) {
+    result.push(
+      {
+        src: `http://picsum.photos/300/200?r=${Math.random()}`,
+        description: generateDescription(),
+      },
+    );
+  }
+
+  return result;
 };
 
 const generateOffers = () => { // добавил иконку в структуру
@@ -250,7 +239,7 @@ const generateOffers = () => { // добавил иконку в структу�
   return offers[getRandomInteger(0, offers.length - 1)];
 };
 
-const generatePoint = (index, offers) => {
+const generateTripEvent = (index, offers) => {
   const dateFrom = generateDateFrom();
   const dateTo = generateDateTo(dateFrom);
 
@@ -271,14 +260,14 @@ const generatePoint = (index, offers) => {
   };
 };
 
-const generatePoints = () => {
+const generateTripEvents = () => {
   const result = [];
 
   for (let index = 1; index <= TRIP_EVENT_COUNT; index++) {
-    result.push(generatePoint(index, generateOffers()));
+    result.push(generateTripEvent(index, generateOffers()));
   }
 
   return result;
 };
 
-export const pointsDataMockArray = generatePoints().slice();
+export const tripEventsDataMockArray = generateTripEvents().slice();
