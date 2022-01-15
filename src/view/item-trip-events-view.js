@@ -1,7 +1,5 @@
 import dayjs from 'dayjs';
 import {createElement} from '../utils/render';
-import {MIN_OFFERS_COUNT, MAX_OFFERS_COUNT} from '../mock/const.js';
-import {getRandomInteger} from '../mock/get-random-integer.js';
 
 const createItemTripEventsTemplate = (tripEvent) => {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type, icon} = tripEvent;
@@ -41,15 +39,10 @@ const createItemTripEventsTemplate = (tripEvent) => {
     </li>`
   );
 
-  const renderOffers = () => {
-    let randomOffersCount = getRandomInteger(MIN_OFFERS_COUNT, MAX_OFFERS_COUNT);
+  const renderOffers = (offersList) => {
     let result = '';
 
-    if (offers.offers.length <= MAX_OFFERS_COUNT) {
-      randomOffersCount = getRandomInteger(MIN_OFFERS_COUNT, offers.offers.length);
-    }
-
-    for (let index = 0; index < randomOffersCount; index++) {
+    for (let index = 0; index < offersList.offers.length; index++) {
       result += renderOffersItem(index);
     }
 
@@ -76,7 +69,7 @@ const createItemTripEventsTemplate = (tripEvent) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${renderOffers()}
+        ${renderOffers(offers)}
       </ul>
       <button class="${favoriteClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>

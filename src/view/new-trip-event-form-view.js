@@ -1,6 +1,4 @@
 import {createElement} from '../utils/render';
-import {MIN_OFFERS_COUNT, MAX_OFFERS_COUNT} from '../mock/const.js';
-import {getRandomInteger} from '../mock/get-random-integer.js';
 
 const createNewTripEventFormTemplate = (tripEvent) => {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = tripEvent;
@@ -17,20 +15,11 @@ const createNewTripEventFormTemplate = (tripEvent) => {
       </div>`
   );
 
-  const renderOffers = () => {
+  const renderOffers = (offersList) => {
     const offersHeader = '<h3 class="event__section-title  event__section-title--offers">Offers</h3>';
-    let randomOffersCount = getRandomInteger(MIN_OFFERS_COUNT, MAX_OFFERS_COUNT);
     let result = '';
 
-    if (offers.offers.length <= MAX_OFFERS_COUNT) {
-      randomOffersCount = getRandomInteger(MIN_OFFERS_COUNT, offers.offers.length);
-
-      if (randomOffersCount === 0) {
-        return result;
-      }
-    }
-
-    for (let index = 0; index < randomOffersCount; index++) {
+    for (let index = 0; index < offersList.offers.length; index++) {
       result += renderOffersItem(index);
     }
 
@@ -146,7 +135,7 @@ const createNewTripEventFormTemplate = (tripEvent) => {
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
-        ${renderOffers()}
+        ${renderOffers(offers)}
         </section>
 
         <section class="event__section  event__section--destination">
