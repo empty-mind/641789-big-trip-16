@@ -1,4 +1,4 @@
-import {createElement} from '../utils/render';
+import AbstractView from './abstract-view.js';
 
 const createNewTripEventFormTemplate = (tripEvent) => {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = tripEvent;
@@ -153,27 +153,15 @@ const createNewTripEventFormTemplate = (tripEvent) => {
   </li>`;
 };
 
-export default class NewTripEventFormView {
-  #element = null;
+export default class NewTripEventFormView extends AbstractView {
   #tripEvent = null;
 
   constructor(tripEvent) {
+    super();
     this.#tripEvent = tripEvent;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createNewTripEventFormTemplate(this.#tripEvent);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
