@@ -1,4 +1,4 @@
-import {render, RenderPosition} from './utils/render.js';
+import {RenderPosition, render, replace} from './utils/render.js';
 import TripInfoView from './view/trip-info-view.js';
 import SiteMenuView from './view/site-menu-view.js';
 import FilterTripEventsView from './view/filter-trip-events-view.js';
@@ -20,12 +20,12 @@ const sortTripEventsElement = document.querySelector('.trip-events');
 const listTripEventsElement = document.querySelector('.trip-events');
 
 if (tripEventsDataMockArray.length === 0) {
-  render(listTripEventsElement, new EmptyTripEventsView().element);
+  render(listTripEventsElement, new EmptyTripEventsView());
 } else {
-  render(tripInfoElement, new TripInfoView(tripEventsDataMockArray).element, RenderPosition.AFTERBEGIN);
-  render(siteMenuElement, new SiteMenuView().element);
-  render(filterTripEventsElement, new FilterTripEventsView().element);
-  render(sortTripEventsElement, new SortTripEventsView().element);
+  render(tripInfoElement, new TripInfoView(tripEventsDataMockArray), RenderPosition.AFTERBEGIN);
+  render(siteMenuElement, new SiteMenuView());
+  render(filterTripEventsElement, new FilterTripEventsView());
+  render(sortTripEventsElement, new SortTripEventsView());
 
   const listTripEventsComponent = new ListTripEventsView();
   render(listTripEventsElement, listTripEventsComponent.element);
@@ -35,11 +35,11 @@ if (tripEventsDataMockArray.length === 0) {
     const tripEventEditComponent = new EditTripEventFormView(itemTripEvent);
 
     const replaceItemTripEventToEditTripEventForm = () => {
-      ripEventsListElement.replaceChild(tripEventEditComponent.element, tripEventComponent.element);
+      replace(tripEventEditComponent, tripEventComponent);
     };
 
     const replaceEditTripEventFormToItemTripEvent = () => {
-      ripEventsListElement.replaceChild(tripEventComponent.element, tripEventEditComponent.element);
+      replace(tripEventComponent, tripEventEditComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -50,31 +50,30 @@ if (tripEventsDataMockArray.length === 0) {
       }
     };
 
-    tripEventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    tripEventComponent.setEditClickHandler(() => {
       replaceItemTripEventToEditTripEventForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    tripEventEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    tripEventEditComponent.setCloseClickHandler(() => {
       replaceEditTripEventFormToItemTripEvent();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    tripEventEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    tripEventEditComponent.setFormSubmitHandler(() => {
       replaceEditTripEventFormToItemTripEvent();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    render(ripEventsListElement, tripEventComponent.element);
+    render(ripEventsListElement, tripEventComponent);
   };
 
   for (let index = 0; index < TRIP_EVENT_COUNT; index++) {
-    renderTripEvent(listTripEventsComponent.element, tripEventsDataMockArray[index]);
+    renderTripEvent(listTripEventsComponent, tripEventsDataMockArray[index]);
   }
 
   // форма добавления новой точки марштура - пока просто добавлена в конец списка
-  render(listTripEventsComponent.element, new NewTripEventFormView(tripEventsDataMockArray[tripEventsDataMockArray.length - 1]).element);
+  render(listTripEventsComponent, new NewTripEventFormView(tripEventsDataMockArray[tripEventsDataMockArray.length - 1]));
 }
 
 /*
