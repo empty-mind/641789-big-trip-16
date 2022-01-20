@@ -61,6 +61,11 @@ export default class TripEventPresenter {
     }
   }
 
+  destroy = () => {
+    remove(this.#itemTripEventsComponent);
+    remove(this.#editTripEventFormComponent);
+  }
+
   #replaceItemTripEventsToEditTripEventForm = () => {
     replace(this.#editTripEventFormComponent, this.#itemTripEventsComponent);
     document.addEventListener('keydown', this.#onEscKeyDown);
