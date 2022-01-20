@@ -2,8 +2,8 @@
 // !ATTENTION - MAGIC NUMBERS AND DRY!
 
 import dayjs from 'dayjs';
-import {TRIP_EVENT_COUNT} from './const.js';
 import {getRandomInteger} from './get-random-integer.js';
+import {nanoid} from 'nanoid';
 
 const generateDate = () => {
   const maxMinuteGap = 5 * 24 * 60; // 5 days
@@ -239,11 +239,13 @@ const generateOffers = () => { // добавил иконку в структу�
   return offers[getRandomInteger(0, offers.length - 1)];
 };
 
-const generateTripEvent = (index, offers) => {
+export const generateTripEvent = () => {
+  const offers = generateOffers();
   const dateFrom = generateDateFrom();
   const dateTo = generateDateTo(dateFrom);
 
   return {
+    id: nanoid(),
     basePrice: getRandomInteger(1, 20) * 10,
     dateFrom,
     dateTo,
@@ -252,22 +254,9 @@ const generateTripEvent = (index, offers) => {
       name: generateDestinationCity(),
       pictures: generatePictures(),
     },
-    id: index,
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers: offers,
-    type: offers.type, // тип точки маршрута совпадает с типом дополнительной опции
-    icon: offers.iconSrc, // добавил иконку в структуру
+    type: offers.type,
+    icon: offers.iconSrc,
   };
 };
-
-const generateTripEvents = () => {
-  const result = [];
-
-  for (let index = 1; index <= TRIP_EVENT_COUNT; index++) {
-    result.push(generateTripEvent(index, generateOffers()));
-  }
-
-  return result;
-};
-
-export const tripEventsDataMockArray = generateTripEvents().slice();
