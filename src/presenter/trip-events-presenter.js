@@ -49,7 +49,7 @@ export default class TripEventsPresenter {
         this.#tripEvents.sort(sortPriceDown);
         break;
       default:
-      this.#tripEvents = [...this.#sourceTripEvents];
+        this.#tripEvents = [...this.#sourceTripEvents];
     }
     this.#currentSortType = sortType;
   }
@@ -60,8 +60,8 @@ export default class TripEventsPresenter {
     }
 
     this.#sortTripEvents(sortType);
-    this.#clearTripEventsList(); //
-    this.#renderListTripEvents(); //
+    this.#clearTripEventsList();
+    this.#renderListTripEvents();
   }
 
   #handleModeChange = () => {
@@ -83,12 +83,10 @@ export default class TripEventsPresenter {
     this.#renderTripEvents(this.#listTripEventsComponent, this.#tripEvents);
   }
 
-  //
   #clearTripEventsList = () => {
     this.#tripEventPresenter.forEach((presenter) => presenter.destroy());
     this.#tripEventPresenter.clear();
   }
-  //
 
   #handleItemTripEventsChange = (updateItemTripEvents) => {
     this.#tripEvents = updateItem(this.#tripEvents, updateItemTripEvents);
