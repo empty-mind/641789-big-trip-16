@@ -19,7 +19,7 @@ const createItemTripEventsTemplate = (tripEvent) => {
     const durationTime = dayjs.duration(dateTo.diff(dateFrom));
     const array = durationTime.format('DD:HH:mm').split(':');
     if (+array[0] !== 0) {
-      result = `${array[0] = ''}D ${array[1]}H ${array[2]}M`;
+      result = `${array[0]}D ${array[1]}H ${array[2]}M`;
     }
     if (+array[0] === 0) {
       result = `${array[0] = ''}${array[1]}H ${array[2]}M`;

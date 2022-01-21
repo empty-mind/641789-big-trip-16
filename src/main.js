@@ -1,14 +1,13 @@
-import {RenderPosition, render} from './utils/render.js';
-import TripInfoView from './view/trip-info-view.js';
+import {render} from './utils/render.js';
 import SiteMenuView from './view/site-menu-view.js';
 import FilterTripEventsView from './view/filter-trip-events-view.js';
 // import NewTripEventFormView from './view/new-trip-event-form-view.js'; // временно отключил
 import TripEventsPresenter from './presenter/trip-events-presenter.js';
 
-import {TRIP_EVENTS_MOCK_ARRAY_LEGTH} from './mock/const.js';
+const TRIP_EVENTS_MOCK_ARRAY_LENGTH = 20;
 import {generateTripEvent} from './mock/trip-events.js';
 
-const tripEvents = Array.from({length: TRIP_EVENTS_MOCK_ARRAY_LEGTH}, generateTripEvent);
+const tripEvents = Array.from({length: TRIP_EVENTS_MOCK_ARRAY_LENGTH}, generateTripEvent);
 
 const siteHeaderElement = document.querySelector('.page-header');
 const tripInfoElement = document.querySelector('.trip-main');
@@ -16,11 +15,10 @@ const siteMenuElement = siteHeaderElement.querySelector('.trip-controls__navigat
 const filterTripEventsElement = siteHeaderElement.querySelector('.trip-controls__filters');
 const listTripEventsElement = document.querySelector('.trip-events');
 
-render(tripInfoElement, new TripInfoView(tripEvents), RenderPosition.AFTERBEGIN);
 render(siteMenuElement, new SiteMenuView());
 render(filterTripEventsElement, new FilterTripEventsView());
 
-const tripEventsPresenter = new TripEventsPresenter(listTripEventsElement);
+const tripEventsPresenter = new TripEventsPresenter(listTripEventsElement, tripInfoElement);
 tripEventsPresenter.init(tripEvents);
 
 /*
