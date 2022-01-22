@@ -57,6 +57,7 @@ export default class TripEventPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editTripEventFormComponent.reset(this.#tripEventsComponent);
       this.#replaceEditTripEventFormToItemTripEvents();
     }
   }
@@ -82,6 +83,7 @@ export default class TripEventPresenter {
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#editTripEventFormComponent.reset(this.#tripEventsComponent);
       this.#replaceEditTripEventFormToItemTripEvents();
     }
   }
@@ -91,10 +93,12 @@ export default class TripEventPresenter {
   }
 
   #handleCloseClick = () => {
+    this.#editTripEventFormComponent.reset(this.#tripEventsComponent);
     this.#replaceEditTripEventFormToItemTripEvents();
   }
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (data) => {
+    this.#changeData(data);
     this.#replaceEditTripEventFormToItemTripEvents();
   }
 
