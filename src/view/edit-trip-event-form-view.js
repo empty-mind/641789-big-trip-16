@@ -1,13 +1,24 @@
-import AbstractView from './abstract-view.js';
+import {DESTINATIONS, OFFERS, generateDescriptions, generatePictures} from '../mock/trip-events.js'; // ???
+import SmartView from './smart-view.js';
 
-const createEditTripEventFormTemplate = (tripEvent) => {
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = tripEvent;
+const getDestinationsList = () => {
+  const destinationsList = DESTINATIONS.map((destinationCity) => ( // ???
+    `<option value="${destinationCity}"></option>`
+  ));
+
+  return destinationsList.join('');
+};
+
+const createEditTripEventFormTemplate = (data) => {
+  const {basePrice, dateFrom, dateTo, destination, offers, type} = data;
+
+  const renderTripEventIcon = () => offers.iconSrc;
 
   const renderOffersItem = (index) => (
     `<div class="event__available-offers">
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-        <label class="event__offer-label" for="event-offer-luggage-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${index}" type="checkbox" name="event-offer-luggage" checked>
+        <label class="event__offer-label" for="event-offer-${index}">
           <span class="event__offer-title">${offers.offers[index].title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offers.offers[index].price}</span>
@@ -26,13 +37,27 @@ const createEditTripEventFormTemplate = (tripEvent) => {
     return offersHeader + result;
   };
 
+  const renderPictureItem = (index) => (
+    `<img class="event__photo" src="${destination.pictures[index].src}" alt="${destination.pictures[index].description}">`
+  );
+
+  const renderPictures = () => {
+    let result = '';
+
+    for (let index = 0; index < destination.pictures.length; index++) {
+      result += renderPictureItem(index);
+    }
+
+    return result;
+  };
+
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="${renderTripEventIcon()}" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -94,9 +119,7 @@ const createEditTripEventFormTemplate = (tripEvent) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${getDestinationsList()};
           </datalist>
         </div>
 
@@ -124,28 +147,34 @@ const createEditTripEventFormTemplate = (tripEvent) => {
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
-        ${renderOffers(offers)}
+          ${renderOffers(offers)}
         </section>
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${destination.description}</p>
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+            ${renderPictures()}
+            </div>
+          </div>
         </section>
       </section>
     </form>
   </li>`;
 };
 
-export default class EditTripEventFormView extends AbstractView {
-  #tripEvent = null;
-
+export default class EditTripEventFormView extends SmartView {
   constructor(tripEvent) {
     super();
-    this.#tripEvent = tripEvent;
+    this._data = tripEvent; //
+
+    this.#setInnerHandlers(); //
   }
 
   get template() {
-    return createEditTripEventFormTemplate(this.#tripEvent);
+    return createEditTripEventFormTemplate(this._data); //
   }
 
   setCloseClickHandler = (callback) => {
@@ -160,12 +189,43 @@ export default class EditTripEventFormView extends AbstractView {
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHabler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  #formSubmitHabler = (evt) => {
+  #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._data);
   }
 
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#tripEventTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+  }
+
+  reset = (tripEvent) => {
+    this.updateData(tripEvent);
+  }
+
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setCloseClickHandler(this._callback.formEditClose);
+  }
+
+  #tripEventTypeChangeHandler = (evt) => {
+    this.updateData({
+      offers: OFFERS.find((item) => item.type === evt.target.value), // ???
+      type: evt.target.value,
+    });
+  }
+
+  #destinationChangeHandler = (evt) => {
+    this.updateData({
+      destination: {
+        description: generateDescriptions(), // ???
+        name: evt.target.value,
+        pictures: generatePictures(), // ???
+      }
+    });
+  }
 }
