@@ -16,7 +16,10 @@ const createItemTripEventsTemplate = (tripEvent) => {
     dayjs.extend(duration);
     /* eslint-enable */
 
-    const durationTime = dayjs.duration(dateTo.diff(dateFrom));
+    const dateA = dayjs(dateFrom);
+    const dateB = dayjs(dateTo);
+
+    const durationTime = dayjs.duration(dateB.diff(dateA));
     const array = durationTime.format('DD:HH:mm').split(':');
     if (+array[0] !== 0) {
       result = `${array[0]}D ${array[1]}H ${array[2]}M`;
@@ -49,18 +52,26 @@ const createItemTripEventsTemplate = (tripEvent) => {
     return result;
   };
 
+  const humanizeDateFromAttributeDayFilter = () => dayjs(dateFrom).format('YYYY-MM-DDTHH:mm');
+  const humanizeDateFromDayFilter = () => dayjs(dateFrom).format('MMM D');
+
+  const humanizeDateFromAttributeTimeFilter = () => dayjs(dateFrom).format('YYYY-MM-DDTHH:mm');
+  const humanizeDateFromTimeFilter = () => dayjs(dateFrom).format('HH:mm');
+  const humanizeDateToAttributeTimeFilter = () => dayjs(dateTo).format('YYYY-MM-DDTHH:mm');
+  const humanizeDateToTimeFilter = () => dayjs(dateTo).format('HH:mm');
+
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="${dateFrom.format('YYYY-MM-DDTHH:mm')}">${dateFrom.format('MMM D')}</time>
+      <time class="event__date" datetime="${humanizeDateFromAttributeDayFilter()}">${humanizeDateFromDayFilter()}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="${icon}" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${dateFrom.format('YYYY-MM-DDTHH:mm')}">${dateFrom.format('HH:mm')}</time>
+          <time class="event__start-time" datetime="${humanizeDateFromAttributeTimeFilter()}">${humanizeDateFromTimeFilter()}</time>
           &mdash;
-          <time class="event__end-time" datetime="${dateTo.format('YYYY-MM-DDTHH:mm')}">${dateTo.format('HH:mm')}</time>
+          <time class="event__end-time" datetime="${humanizeDateToAttributeTimeFilter()}">${humanizeDateToTimeFilter()}</time>
         </p>
         <p class="event__duration">${renderDurationTime()}</p>
       </div>

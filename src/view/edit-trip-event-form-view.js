@@ -1,4 +1,7 @@
 import {DESTINATIONS, OFFERS, generateDescriptions, generatePictures} from '../mock/trip-events.js'; // ???
+import dayjs from 'dayjs';
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import SmartView from './smart-view.js';
 
 const getDestinationsList = () => {
@@ -50,6 +53,9 @@ const createEditTripEventFormTemplate = (data) => {
 
     return result;
   };
+
+  const humanizeDateFromValueEditFormInput = () => dayjs(dateFrom).format('DD/MM/YY HH:mm');
+  const humanizeDateToValueEditFormInput = () => dayjs(dateTo).format('DD/MM/YY HH:mm');
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -125,10 +131,10 @@ const createEditTripEventFormTemplate = (data) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom.format('DD/MM/YY HH:mm')}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDateFromValueEditFormInput()}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo.format('DD/MM/YY HH:mm')}">
+<input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDateToValueEditFormInput()}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -166,15 +172,54 @@ const createEditTripEventFormTemplate = (data) => {
 };
 
 export default class EditTripEventFormView extends SmartView {
+  #datepicker = new Map();
+
   constructor(tripEvent) {
     super();
-    this._data = tripEvent; //
+    this._data = tripEvent;
 
-    this.#setInnerHandlers(); //
+    this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
-    return createEditTripEventFormTemplate(this._data); //
+    return createEditTripEventFormTemplate(this._data);
+  }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  }
+
+  #setDatepicker = () => {
+    if (this._data.dateFrom) {
+      this.#datepicker = flatpickr(
+        this.element.querySelector('#event-start-time-1'),
+        {
+          dateFormat: 'd/m/y/ H:i',
+          defaultDate: this._data.dateFrom,
+          enableTime: true,
+          TIME_24HR: true,
+          onChange: this.#dateFromChangeHandler,
+        },
+      );
+    }
+    if (this._data.dateTo) {
+      this.#datepicker = flatpickr(
+        this.element.querySelector('#event-end-time-1'),
+        {
+          dateFormat: 'd/m/y/ H:i',
+          defaultDate: this._data.dateTo,
+          enableTime: true,
+          TIME_24HR: true,
+          onChange: this.#dateToChangeHandler,
+        },
+      );
+    }
   }
 
   setCloseClickHandler = (callback) => {
@@ -210,6 +255,7 @@ export default class EditTripEventFormView extends SmartView {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setCloseClickHandler(this._callback.formEditClose);
+    this.#setDatepicker();
   }
 
   #tripEventTypeChangeHandler = (evt) => {
@@ -226,6 +272,18 @@ export default class EditTripEventFormView extends SmartView {
         name: evt.target.value,
         pictures: generatePictures(), // ???
       }
+    });
+  }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateFrom: userDate,
+    });
+  }
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateTo: userDate,
     });
   }
 }
