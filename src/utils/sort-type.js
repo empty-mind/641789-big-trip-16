@@ -12,3 +12,5 @@ export const sortTripEventsDurationTimeDown = (tripEventA, tripEventB) => {
 };
 
 export const sortPriceDown = (tripEventA, tripEventB) => tripEventB.basePrice - tripEventA.basePrice;
+
+export const sortDefault = (pointA, pointB) => pointA.dateFrom - pointB.dateFrom;
