@@ -1,5 +1,6 @@
-import {SortType} from '../utils/const.js';
-import {RenderPosition, render} from '../utils/render.js';
+import {SortType, UpdateType, FilterType, UserAction} from '../utils/const.js';
+import {filter} from '../utils/filter.js'
+import {RenderPosition, render, remove} from '../utils/render.js';
 import TripInfoView from '../view/trip-info-view.js';
 import SortTripEventsView from '../view/sort-trip-events-view.js';
 import ListTripEventsView from '../view/list-trip-events-view.js';
@@ -12,22 +13,42 @@ export default class TripEventsPresenter {
   #listTripEventsContainer = null;
   #tripInfoContainer = null;
   #tripEventsModel = null;
+  #filterTripEventsModel = null;
 
-  #sortTripEventsConponent = new SortTripEventsView();
+  // #sortTripEventsConponent = new SortTripEventsView();
+  // #listTripEventsComponent = new ListTripEventsView();
+  #sortTripEventsConponent = null;
   #listTripEventsComponent = new ListTripEventsView();
-  #emptyTripEventsComponent = new EmptyTripEventsView();
+  #emptyTripEventsComponent = null;
+  #filterType = FilterType.EVERYTHING;
 
   #tripEventPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
 
-  constructor(listTripEventsContainer, tripInfoContainer, tripEventsModel) {
+  constructor(listTripEventsContainer, tripInfoContainer, tripEventsModel, filterTripEventsModel) {
     this.#listTripEventsContainer = listTripEventsContainer;
     this.#tripInfoContainer = tripInfoContainer;
     this.#tripEventsModel = tripEventsModel;
+    this.#filterTripEventsModel = filterTripEventsModel;
+
+    this.#tripEventsModel.addObserver(this.#handleModelEvent);
+    this.#filterTripEventsModel.addObserver(this.#handleModelEvent);
   }
 
   get tripEvents() {
-    return this.#tripEventsModel.tripEvents;
+    this.#filterType = this.#filterTripEventsModel.filter;
+    const tripEvents = this.#tripEventsModel.tripEvents;
+    const filterTripEvents = filter[this.#filterType](tripEvents);
+
+    switch (this.#currentSortType) {
+      case SortType.DURATION_TIME_DOWN:
+        return filterTripEvents.sort(sortTripEventsDurationTimeDown);
+        break;
+      case SortType.PRICE_DOWN:
+        return filterTripEvents.sort(sortPriceDown);
+      default:
+        return filterTripEvents.sort(sortDefault);
+    }
   }
 
   init = () => {
@@ -35,23 +56,38 @@ export default class TripEventsPresenter {
       this.#renderEmptyTripEvents();
     } else {
       this.#renderTripInfoView(this.tripEvents);
-      this.#renderSortTripEvents();
       this.#renderListTripEvents();
     }
   }
 
-  #sortTripEvents = (sortType) => {
-    switch (sortType) {
-      case SortType.DURATION_TIME_DOWN:
-        this.tripEvents.sort(sortTripEventsDurationTimeDown);
+  // #sortTripEvents = (sortType) => {
+  //   switch (sortType) {
+  //     case SortType.DURATION_TIME_DOWN:
+  //       this.tripEvents.sort(sortTripEventsDurationTimeDown);
+  //       break;
+  //     case SortType.PRICE_DOWN:
+  //       this.tripEvents.sort(sortPriceDown);
+  //       break;
+  //     default:
+  //       this.tripEvents.sort(sortDefault);
+  //   }
+  //   this.#currentSortType = sortType;
+  // }
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#tripEventPresenter.get(data.id).init(data);
         break;
-      case SortType.PRICE_DOWN:
-        this.tripEvents.sort(sortPriceDown);
-        break;
-      default:
-        this.tripEvents.sort(sortDefault);
+      case UpdateType.MINOR:
+        this.#clearTripEventsList();
+        this.#renderListTripEvents();
+      break;
+      case UpdateType.MAJOR:
+        this.#clearTripEventsList({resetSortType: true});
+        this.#renderListTripEvents();
+      break;
     }
-    this.#currentSortType = sortType;
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -59,7 +95,7 @@ export default class TripEventsPresenter {
       return;
     }
 
-    this.#sortTripEvents(sortType);
+    this.#currentSortType = sortType;
     this.#clearTripEventsList();
     this.#renderListTripEvents();
   }
@@ -74,18 +110,36 @@ export default class TripEventsPresenter {
   }
 
   #renderSortTripEvents = () => {
+    this.#sortTripEventsConponent = new SortTripEventsView();
     render(this.#listTripEventsContainer, this.#sortTripEventsConponent);
     this.#sortTripEventsConponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderListTripEvents = () => {
+    const tripEvents = this.tripEvents;
+
+    if (tripEvents.length === 0) {
+      this.#renderEmptyTripEvents();
+      return;
+    }
+
+    this.#renderSortTripEvents();
     render(this.#listTripEventsContainer, this.#listTripEventsComponent);
-    this.#renderTripEvents(this.#listTripEventsComponent, this.tripEvents);
+    this.#renderTripEvents(this.#listTripEventsComponent, tripEvents);
   }
 
-  #clearTripEventsList = () => {
+  #clearTripEventsList = ({resetSortType = false} = {}) => {
     this.#tripEventPresenter.forEach((presenter) => presenter.destroy());
     this.#tripEventPresenter.clear();
+
+    remove(this.#sortTripEventsConponent);
+
+    if (this.#emptyTripEventsComponent) {
+      remove(this.#emptyTripEventsComponent);
+    }
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
   }
 
   #handleItemTripEventsChange = (updateItemTripEvents) => {
@@ -105,6 +159,7 @@ export default class TripEventsPresenter {
   }
 
   #renderEmptyTripEvents = () => {
+    this.#emptyTripEventsComponent = new EmptyTripEventsView(this.#filterType);
     render(this.#listTripEventsContainer, this.#emptyTripEventsComponent);
   }
 }
