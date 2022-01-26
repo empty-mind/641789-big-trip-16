@@ -6,6 +6,7 @@ import SortTripEventsView from '../view/sort-trip-events-view.js';
 import ListTripEventsView from '../view/list-trip-events-view.js';
 import EmptyTripEventsView from '../view/empty-trip-events-view.js';
 import TripEventPresenter from './trip-event-presenter.js';
+import NewTripEventPresenter from './new-trip-event-presenter.js';
 
 import {sortTripEventsDurationTimeDown, sortPriceDown, sortDefault} from '../utils/sort-type.js';
 
@@ -15,14 +16,13 @@ export default class TripEventsPresenter {
   #tripEventsModel = null;
   #filterTripEventsModel = null;
 
-  // #sortTripEventsConponent = new SortTripEventsView();
-  // #listTripEventsComponent = new ListTripEventsView();
   #sortTripEventsConponent = null;
   #listTripEventsComponent = new ListTripEventsView();
   #emptyTripEventsComponent = null;
   #filterType = FilterType.EVERYTHING;
 
   #tripEventPresenter = new Map();
+  #newTripEventPresenter = null;
   #currentSortType = SortType.DEFAULT;
 
   constructor(listTripEventsContainer, tripInfoContainer, tripEventsModel, filterTripEventsModel) {
@@ -30,6 +30,8 @@ export default class TripEventsPresenter {
     this.#tripInfoContainer = tripInfoContainer;
     this.#tripEventsModel = tripEventsModel;
     this.#filterTripEventsModel = filterTripEventsModel;
+
+    this.#newTripEventPresenter = new NewTripEventPresenter(this.#listTripEventsComponent, this.#handleViewAction);
 
     this.#tripEventsModel.addObserver(this.#handleModelEvent);
     this.#filterTripEventsModel.addObserver(this.#handleModelEvent);
@@ -115,6 +117,7 @@ export default class TripEventsPresenter {
   }
 
   #handleModeChange = () => {
+    this.#newTripEventPresenter.destroy();
     this.#tripEventPresenter.forEach((tripEvent) => tripEvent.resetView());
   }
 
@@ -145,6 +148,7 @@ export default class TripEventsPresenter {
   #clearTripEventsList = ({resetSortType = false} = {}) => {
     this.#tripEventPresenter.forEach((presenter) => presenter.destroy());
     this.#tripEventPresenter.clear();
+    this.#newTripEventPresenter.destroy();
 
     remove(this.#sortTripEventsConponent);
 
@@ -171,5 +175,11 @@ export default class TripEventsPresenter {
   #renderEmptyTripEvents = () => {
     this.#emptyTripEventsComponent = new EmptyTripEventsView(this.#filterType);
     render(this.#listTripEventsContainer, this.#emptyTripEventsComponent);
+  }
+
+  createPoint = () => {
+    this.#currentSortType = SortType.DEFAULT;
+    this.#filterTripEventsModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newTripEventPresenter.init();
   }
 }

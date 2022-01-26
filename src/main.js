@@ -30,11 +30,12 @@ filterTripEventsPresenter.init();
 const tripEventsPresenter = new TripEventsPresenter(listTripEventsElement, tripInfoElement, tripEventsModel, filterTripEventsModel);
 tripEventsPresenter.init();
 
-/*
-// import NewTripEventFormView from './view/new-trip-event-form-view.js';
-// trip event new form
-render(listTripEventsComponent, new NewTripEventFormView(tripEvents[tripEvents.length - 1]));
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripEventsPresenter.createPoint();
+});
 
+/*
 // loading - temp position
 import {createLoadingTripEventsTemplate} from './view/loading-trip-events-view.js';
 renderTemplate(contentTripEventsElement, createLoadingTripEventsTemplate(), RenderPosition.AFTEREND);

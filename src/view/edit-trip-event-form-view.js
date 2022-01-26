@@ -4,6 +4,33 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import SmartView from './smart-view.js';
 
+const newTripEvent = {
+  basePrice: 0,
+  dateFrom: '01/01/22 00:00',
+  dateTo: '01/01/22 00:00',
+  destination:
+  {
+    description: 'Enter city to read description and view photos',
+    name: 'Please enter city',
+    pictures: [],
+  },
+  isFavorite: false,
+  offers:
+  {
+    type: 'drive',
+    offers: [
+      {
+        'id': 1,
+        'title': 'Upgrade to a business class',
+        'price': 0,
+      },
+    ],
+    iconSrc: 'img/icons/drive.png',
+  },
+  type: 'drive',
+  icon: 'img/icons/drive.png',
+};
+
 const getDestinationsList = () => {
   const destinationsList = DESTINATIONS.map((destinationCity) => ( // ???
     `<option value="${destinationCity}"></option>`
@@ -172,7 +199,7 @@ const createEditTripEventFormTemplate = (data) => {
 export default class EditTripEventFormView extends SmartView {
   #datepicker = new Map();
 
-  constructor(tripEvent) {
+  constructor(tripEvent = newTripEvent) {
     super();
     this._data = tripEvent;
 
