@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import he from 'he';
 import AbstractView from './abstract-view.js';
 
 const createItemTripEventsTemplate = (tripEvent) => {
@@ -66,7 +67,7 @@ const createItemTripEventsTemplate = (tripEvent) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="${icon}" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destination.name}</h3>
+      <h3 class="event__title">${type} ${he.encode(destination.name)}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${humanizeDateFromAttributeTimeFilter()}">${humanizeDateFromTimeFilter()}</time>

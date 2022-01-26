@@ -1,5 +1,5 @@
 import {SortType, UpdateType, FilterType, UserAction} from '../utils/const.js';
-import {filter} from '../utils/filter.js'
+import {filter} from '../utils/filter.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
 import TripInfoView from '../view/trip-info-view.js';
 import SortTripEventsView from '../view/sort-trip-events-view.js';
@@ -45,7 +45,6 @@ export default class TripEventsPresenter {
     switch (this.#currentSortType) {
       case SortType.DURATION_TIME_DOWN:
         return filterTripEvents.sort(sortTripEventsDurationTimeDown);
-        break;
       case SortType.PRICE_DOWN:
         return filterTripEvents.sort(sortPriceDown);
       default:
@@ -98,11 +97,11 @@ export default class TripEventsPresenter {
       case UpdateType.MINOR:
         this.#clearTripEventsList();
         this.#renderListTripEvents();
-      break;
+        break;
       case UpdateType.MAJOR:
         this.#clearTripEventsList({resetSortType: true});
         this.#renderListTripEvents();
-      break;
+        break;
     }
   }
 

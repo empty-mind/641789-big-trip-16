@@ -167,7 +167,7 @@ const createEditTripEventFormTemplate = (data) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -288,7 +288,7 @@ export default class EditTripEventFormView extends SmartView {
     this.updateData({
       offers: OFFERS.find((item) => item.type === evt.target.value), // ???
       type: evt.target.value,
-      icon: 'img/icons/' + evt.target.value + '.png',
+      icon: `img/icons/${evt.target.value}.png`,
     });
   }
 

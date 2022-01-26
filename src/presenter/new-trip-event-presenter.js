@@ -27,30 +27,30 @@ export default class NewTripEventPresenter {
     document.addEventListener('keydown', this.onEscKeyDown);
   }
 
-    destroy = () => {
-      if (this.#editTripEventFormComponent === null) {
-        return;
-      }
-
-      remove(this.#editTripEventFormComponent);
-      this.#editTripEventFormComponent = null;
-
-      document.removeEventListener('keydown', this.#onEscKeyDown);
+  destroy = () => {
+    if (this.#editTripEventFormComponent === null) {
+      return;
     }
 
-    #handleFormSubmit = (tripEvent) => {
-      this.#changeData(UserAction.ADD_TRIP_EVENT, UpdateType.MINOR, {id: nanoid(), ...tripEvent});
+    remove(this.#editTripEventFormComponent);
+    this.#editTripEventFormComponent = null;
+
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+  }
+
+  #handleFormSubmit = (tripEvent) => {
+    this.#changeData(UserAction.ADD_TRIP_EVENT, UpdateType.MINOR, {id: nanoid(), ...tripEvent});
+    this.destroy();
+  }
+
+  #handleDeleteClick = () => {
+    this.destroy();
+  }
+
+  #onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
       this.destroy();
-    }
-
-    #handleDeleteClick = () => {
-      this.destroy();
-    }
-
-    #onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        this.destroy();
-      }
     }
   }
+}
