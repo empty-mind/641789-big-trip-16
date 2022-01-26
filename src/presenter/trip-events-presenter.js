@@ -74,6 +74,20 @@ export default class TripEventsPresenter {
   //   this.#currentSortType = sortType;
   // }
 
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_TRIP_EVENT:
+        this.#tripEventsModel.updateTripEvent(updateType, update);
+        break;
+      case UserAction.ADD_TRIP_EVENT:
+        this.#tripEventsModel.addTripEvent(updateType, update);
+        break;
+      case UserAction.DELETE_TRIP_EVENT:
+        this.#tripEventsModel.deleteTripEvent(updateType, update);
+        break;
+    }
+  }
+
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
@@ -142,12 +156,8 @@ export default class TripEventsPresenter {
     }
   }
 
-  #handleItemTripEventsChange = (updateItemTripEvents) => {
-    this.#tripEventPresenter.get(updateItemTripEvents.id).init(updateItemTripEvents);
-  }
-
   #renderItemTripEvents = (tripEventsListElement, tripEventComponent) => {
-    const tripEventPresenter = new TripEventPresenter(tripEventsListElement, this.#handleItemTripEventsChange, this.#handleModeChange);
+    const tripEventPresenter = new TripEventPresenter(tripEventsListElement, this.#handleViewAction, this.#handleModeChange);
     tripEventPresenter.init(tripEventComponent);
     this.#tripEventPresenter.set(tripEventComponent.id, tripEventPresenter);
   }

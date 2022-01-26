@@ -242,7 +242,8 @@ export default class EditTripEventFormView extends SmartView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#tripEventTypeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('#event-destination-1').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('#event-price-1').addEventListener('change', this.#priceChangeHandler);
   }
 
   reset = (tripEvent) => {
@@ -283,6 +284,22 @@ export default class EditTripEventFormView extends SmartView {
   #dateToChangeHandler = ([userDate]) => {
     this.updateData({
       dateTo: userDate,
+    });
+  }
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(this._data);
+  }
+
+  #priceChangeHandler = (evt) => {
+    this.updateData({
+      basePrice: evt.target.value,
     });
   }
 }
