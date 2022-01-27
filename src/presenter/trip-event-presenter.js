@@ -1,4 +1,5 @@
 import {render, replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from '../utils/const.js';
 import ItemTripEventsView from '../view/item-trip-events-view.js';
 import EditTripEventFormView from '../view/edit-trip-event-form-view.js';
 
@@ -37,6 +38,7 @@ export default class TripEventPresenter {
     this.#editTripEventFormComponent.setCloseClickHandler(this.#handleCloseClick);
     this.#editTripEventFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#itemTripEventsComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#editTripEventFormComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevItemTripEventsComponent === null || prevEditTripEventFormComponent === null) {
       render(this.#listTripEventsContainer, this.#itemTripEventsComponent);
@@ -98,11 +100,19 @@ export default class TripEventPresenter {
   }
 
   #handleFormSubmit = (data) => {
-    this.#changeData(data);
+    this.#changeData(UserAction.UPDATE_TRIP_EVENT, UpdateType.MINOR, data);
     this.#replaceEditTripEventFormToItemTripEvents();
   }
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#tripEventsComponent, isFavorite: !this.#tripEventsComponent.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_TRIP_EVENT,
+      UpdateType.MINOR,
+      {...this.#tripEventsComponent, isFavorite: !this.#tripEventsComponent.isFavorite}
+    );
+  }
+
+  #handleDeleteClick = (tripEventsComponent) => {
+    this.#changeData(UserAction.DELETE_TRIP_EVENT, UpdateType.MINOR, tripEventsComponent);
   }
 }

@@ -4,6 +4,33 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import SmartView from './smart-view.js';
 
+const newTripEvent = {
+  basePrice: 0,
+  dateFrom: '01/01/22 00:00',
+  dateTo: '01/01/22 00:00',
+  destination:
+  {
+    description: 'Enter city to read description and view photos',
+    name: 'Please enter city',
+    pictures: [],
+  },
+  isFavorite: false,
+  offers:
+  {
+    type: 'drive',
+    offers: [
+      {
+        'id': 1,
+        'title': 'Upgrade to a business class',
+        'price': 0,
+      },
+    ],
+    iconSrc: 'img/icons/drive.png',
+  },
+  type: 'drive',
+  icon: 'img/icons/drive.png',
+};
+
 const getDestinationsList = () => {
   const destinationsList = DESTINATIONS.map((destinationCity) => ( // ???
     `<option value="${destinationCity}"></option>`
@@ -14,8 +41,6 @@ const getDestinationsList = () => {
 
 const createEditTripEventFormTemplate = (data) => {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = data;
-
-  const renderTripEventIcon = () => offers.iconSrc;
 
   const renderOffersItem = (index) => (
     `<div class="event__available-offers">
@@ -63,7 +88,7 @@ const createEditTripEventFormTemplate = (data) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="${renderTripEventIcon()}" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -97,7 +122,7 @@ const createEditTripEventFormTemplate = (data) => {
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
                 <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
               </div>
 
@@ -142,7 +167,7 @@ const createEditTripEventFormTemplate = (data) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -174,7 +199,7 @@ const createEditTripEventFormTemplate = (data) => {
 export default class EditTripEventFormView extends SmartView {
   #datepicker = new Map();
 
-  constructor(tripEvent) {
+  constructor(tripEvent = newTripEvent) {
     super();
     this._data = tripEvent;
 
@@ -244,7 +269,8 @@ export default class EditTripEventFormView extends SmartView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#tripEventTypeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('#event-destination-1').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('#event-price-1').addEventListener('change', this.#priceChangeHandler);
   }
 
   reset = (tripEvent) => {
@@ -262,6 +288,7 @@ export default class EditTripEventFormView extends SmartView {
     this.updateData({
       offers: OFFERS.find((item) => item.type === evt.target.value), // ???
       type: evt.target.value,
+      icon: `img/icons/${evt.target.value}.png`,
     });
   }
 
@@ -284,6 +311,22 @@ export default class EditTripEventFormView extends SmartView {
   #dateToChangeHandler = ([userDate]) => {
     this.updateData({
       dateTo: userDate,
+    });
+  }
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(this._data);
+  }
+
+  #priceChangeHandler = (evt) => {
+    this.updateData({
+      basePrice: evt.target.value,
     });
   }
 }

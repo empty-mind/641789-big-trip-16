@@ -1,13 +1,20 @@
 import {render} from './utils/render.js';
 import SiteMenuView from './view/site-menu-view.js';
-import FilterTripEventsView from './view/filter-trip-events-view.js';
-// import NewTripEventFormView from './view/new-trip-event-form-view.js'; // временно отключил
+
+import FilterTripEventsPresenter from './presenter/filter-trip-events-presenter.js';
 import TripEventsPresenter from './presenter/trip-events-presenter.js';
+
+import FilterTripEventsModel from './model/filter-trip-events-model.js';
+import TripEventsModel from './model/trip-events-model.js';
 
 const TRIP_EVENTS_MOCK_ARRAY_LENGTH = 20;
 import {generateTripEvent} from './mock/trip-events.js';
 
 const tripEvents = Array.from({length: TRIP_EVENTS_MOCK_ARRAY_LENGTH}, generateTripEvent);
+
+const filterTripEventsModel = new FilterTripEventsModel();
+const tripEventsModel = new TripEventsModel();
+tripEventsModel.tripEvents = tripEvents;
 
 const siteHeaderElement = document.querySelector('.page-header');
 const tripInfoElement = document.querySelector('.trip-main');
@@ -16,15 +23,19 @@ const filterTripEventsElement = siteHeaderElement.querySelector('.trip-controls_
 const listTripEventsElement = document.querySelector('.trip-events');
 
 render(siteMenuElement, new SiteMenuView());
-render(filterTripEventsElement, new FilterTripEventsView());
 
-const tripEventsPresenter = new TripEventsPresenter(listTripEventsElement, tripInfoElement);
-tripEventsPresenter.init(tripEvents);
+const filterTripEventsPresenter = new FilterTripEventsPresenter(filterTripEventsElement, filterTripEventsModel);
+filterTripEventsPresenter.init();
+
+const tripEventsPresenter = new TripEventsPresenter(listTripEventsElement, tripInfoElement, tripEventsModel, filterTripEventsModel);
+tripEventsPresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripEventsPresenter.createPoint();
+});
 
 /*
-// trip event new form
-render(listTripEventsComponent, new NewTripEventFormView(tripEvents[tripEvents.length - 1]));
-
 // loading - temp position
 import {createLoadingTripEventsTemplate} from './view/loading-trip-events-view.js';
 renderTemplate(contentTripEventsElement, createLoadingTripEventsTemplate(), RenderPosition.AFTEREND);
