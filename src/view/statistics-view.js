@@ -6,8 +6,8 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 const renderMoneyChart = (moneyCtx, tripEvents) => {
   const tripEventsTypes = Array.from(new Set(tripEvents.map((tripEvent) => tripEvent.type)));
 
-  const countTripEventsMoney = (tripEvents, type) => {
-    const filterTripEvents = tripEvents.filter((tripEvent) => tripEvent.type === type);
+  const countTripEventsMoney = (array, type) => {
+    const filterTripEvents = array.filter((tripEvent) => tripEvent.type === type);
     return {
       money: filterTripEvents.reduce((money, tripEvent) => +money + tripEvent.basePrice, 0),
       type: type,
@@ -82,13 +82,13 @@ const renderMoneyChart = (moneyCtx, tripEvents) => {
       },
     },
   });
-}
+};
 
 const renderTypeChart = (typeCtx, tripEvents) => {
   const tripEventsTypes = Array.from(new Set(tripEvents.map((tripEvent) => tripEvent.type)));
 
-  const countTripEventsTypes = (tripEvents, type) => {
-    const filterTripEvents = tripEvents.filter((tripEvent) => tripEvent.type === type);
+  const countTripEventsTypes = (array, type) => {
+    const filterTripEvents = array.filter((tripEvent) => tripEvent.type === type);
     return {
       typeCount: filterTripEvents.length,
       type: type,
@@ -163,7 +163,7 @@ const renderTypeChart = (typeCtx, tripEvents) => {
       },
     },
   });
-}
+};
 
 const renderTimeChart = (timeCtx, tripEvents) => {
   const tripEventsTypes = Array.from(new Set(tripEvents.map((tripEvent) => tripEvent.type)));
@@ -174,10 +174,10 @@ const renderTimeChart = (timeCtx, tripEvents) => {
     const minutes = (time % 60) > 0 ? `${time % 60}M` : '00M';
 
     return `${day} ${hours} ${minutes}`;
-  }
+  };
 
-  const countTripEventsTime = (tripEvents, type) => {
-    const filterTripEvents = tripEvents.filter((tripEvent) => tripEvent.type === type);
+  const countTripEventsTime = (array, type) => {
+    const filterTripEvents = array.filter((tripEvent) => tripEvent.type === type);
     const durationTime = filterTripEvents.reduce((time, tripEvent) => time + dayjs(tripEvent.dateTo).diff(tripEvent.dateFrom, 'minute'), 0);
 
     return {
@@ -254,7 +254,7 @@ const renderTimeChart = (timeCtx, tripEvents) => {
       },
     },
   });
-}
+};
 
 export const createStatisticsTemplate = () => (
   `<section class="statistics">
