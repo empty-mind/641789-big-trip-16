@@ -21,3 +21,8 @@ export const UserAction = {
   ADD_TRIP_EVENT: 'ADD_TRIP_EVENT',
   DELETE_TRIP_EVENT: 'DELETE_TRIP_EVENT',
 };
+
+export const MenuItem = {
+  TABLE: 'TABLE',
+  STATS: 'STATS',
+};

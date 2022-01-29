@@ -44,6 +44,15 @@ export default class FilterTripEventsPresenter {
 
     replace(this.#filterTripEventsComponent, prevfilterTripEventsComponent);
     remove(prevfilterTripEventsComponent);
+
+    this.#filterTripEventsModel.addObserver(this.#handleModelEvent); //
+  }
+
+  destroy = () => {
+    remove(this.#filterTripEventsComponent);
+    this.#filterTripEventsComponent = null;
+    this.#filterTripEventsModel.removeObserver(this.#handleModelEvent);
+    this.#filterTripEventsModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   }
 
   #handleModelEvent = () => {
