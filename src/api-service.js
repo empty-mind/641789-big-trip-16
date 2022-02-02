@@ -87,7 +87,7 @@ export default class ApiService {
       'date_from': tripEvent.dateFrom instanceof Date ? tripEvent.dateFrom.toISOString() : null,
       'date_to': tripEvent.dateTo instanceof Date ? tripEvent.dateTo.toISOString() : null,
       'is_favorite': tripEvent.isFavorite,
-    }
+    };
 
     delete adaptedTripEvent.price;
     delete adaptedTripEvent.dateFrom;

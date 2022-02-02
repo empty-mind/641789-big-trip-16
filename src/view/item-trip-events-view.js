@@ -2,15 +2,12 @@ import dayjs from 'dayjs';
 import he from 'he';
 import AbstractView from './abstract-view.js';
 
-const createOfferTemplate = (offers) => {
-  return offers.map((offer) => (
-    `<li class="event__offer">
+const createOfferTemplate = (offers) => offers.map((offer) => (
+  `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${offer.price}</span>
-    </li>`
-  )).join('')
-}
+  </li>`)).join('');
 
 const createItemTripEventsTemplate = (tripEvent) => {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = tripEvent;
@@ -52,8 +49,8 @@ const createItemTripEventsTemplate = (tripEvent) => {
   const offersTemplate = createOfferTemplate(offers);
 
   const favoriteClassName = isFavorite
-  ? 'event__favorite-btn--active'
-  : '';
+    ? 'event__favorite-btn--active'
+    : '';
 
   return `<li class="trip-events__item">
     <div class="event">
