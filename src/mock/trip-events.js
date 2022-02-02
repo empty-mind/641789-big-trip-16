@@ -3,7 +3,6 @@
 
 import dayjs from 'dayjs';
 import {getRandomInteger} from './get-random-integer.js';
-import {nanoid} from 'nanoid';
 
 const generateRandomElement = (array) => array[getRandomInteger(0, array.length - 1)];
 
@@ -241,7 +240,7 @@ export const generateTripEvent = () => {
   const dateTo = generateDateTo(dateFrom);
 
   return {
-    id: nanoid(),
+    id: '',
     basePrice: getRandomInteger(1, 20) * 10,
     dateFrom,
     dateTo,

@@ -6,12 +6,12 @@ export default class FilterTripEventsPresenter {
   #filterTripEventsContainer = null;
   #filterTripEventsModel = null;
   #filterTripEventsComponent = null;
+  #tripEventsModel = null;
 
-  constructor(filterTripEventsContainer, filterTripEventsModel) {
+  constructor(filterTripEventsContainer, filterTripEventsModel, tripEventsModel) {
     this.#filterTripEventsContainer = filterTripEventsContainer;
     this.#filterTripEventsModel = filterTripEventsModel;
-
-    this.#filterTripEventsModel.addObserver(this.#handleModelEvent);
+    this.#tripEventsModel = tripEventsModel;
   }
 
   get filters() {
@@ -33,25 +33,29 @@ export default class FilterTripEventsPresenter {
 
   init = () => {
     const filters = this.filters;
-    const prevfilterTripEventsComponent = this.#filterTripEventsComponent;
-    this.#filterTripEventsComponent = new FilterTripEventsView(filters, this.#filterTripEventsModel.filter);
+    const prevFilterTripEventsComponent = this.#filterTripEventsComponent;
+
+    this.#filterTripEventsComponent = new FilterTripEventsView(filters, this.#filterTripEventsModel.filter, this.#tripEventsModel.tripEvents);
     this.#filterTripEventsComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
-    if (prevfilterTripEventsComponent === null) {
+    this.#tripEventsModel.addObserver(this.#handleModelEvent);
+    this.#filterTripEventsModel.addObserver(this.#handleModelEvent);
+
+    if (prevFilterTripEventsComponent === null) {
       render(this.#filterTripEventsContainer, this.#filterTripEventsComponent);
       return;
     }
 
-    replace(this.#filterTripEventsComponent, prevfilterTripEventsComponent);
-    remove(prevfilterTripEventsComponent);
-
-    this.#filterTripEventsModel.addObserver(this.#handleModelEvent); //
+    replace(this.#filterTripEventsComponent, prevFilterTripEventsComponent);
+    remove(prevFilterTripEventsComponent);
   }
 
   destroy = () => {
     remove(this.#filterTripEventsComponent);
     this.#filterTripEventsComponent = null;
+    this.#tripEventsModel.removeObserver(this.#handleModelEvent);
     this.#filterTripEventsModel.removeObserver(this.#handleModelEvent);
+
     this.#filterTripEventsModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   }
 
