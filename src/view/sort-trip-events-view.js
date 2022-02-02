@@ -1,10 +1,10 @@
 import AbstractView from './abstract-view.js';
 import {SortType} from '../utils/const.js';
 
-const createSortTripEventsTemplate = () => (
+const createSortTripEventsTemplate = (currentSortType) => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
-      <input id="sort-day" class="trip-sort__input  visually-hidden" data-sort-type="${SortType.DEFAULT}" type="radio" name="trip-sort" value="sort-day" checked>
+      <input id="sort-day" class="trip-sort__input  visually-hidden" data-sort-type="${SortType.DEFAULT}" type="radio" name="trip-sort" value="sort-day" ${currentSortType === SortType.DEFAULT ? 'checked' : ''}>
       <label class="trip-sort__btn" for="sort-day">Day</label>
     </div>
 
@@ -14,12 +14,12 @@ const createSortTripEventsTemplate = () => (
     </div>
 
     <div class="trip-sort__item  trip-sort__item--time">
-      <input id="sort-time" class="trip-sort__input  visually-hidden" data-sort-type="${SortType.DURATION_TIME_DOWN}" type="radio" name="trip-sort" value="sort-time">
+      <input id="sort-time" class="trip-sort__input  visually-hidden" data-sort-type="${SortType.DURATION_TIME_DOWN}" type="radio" name="trip-sort" value="sort-time" ${currentSortType === SortType.DURATION_TIME_DOWN ? 'checked' : ''}>
       <label class="trip-sort__btn" for="sort-time">Time</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--price">
-      <input id="sort-price" class="trip-sort__input  visually-hidden" data-sort-type="${SortType.PRICE_DOWN}" type="radio" name="trip-sort" value="sort-price">
+      <input id="sort-price" class="trip-sort__input  visually-hidden" data-sort-type="${SortType.PRICE_DOWN}" type="radio" name="trip-sort" value="sort-price" ${currentSortType === SortType.PRICE_DOWN ? 'checked' : ''}>
       <label class="trip-sort__btn" for="sort-price"">Price</label>
     </div>
 
@@ -31,8 +31,15 @@ const createSortTripEventsTemplate = () => (
 );
 
 export default class SortTripEventsView extends AbstractView {
+  #currentSortType = null;
+
+  constructor(currentSortType) {
+    super();
+    this.#currentSortType = currentSortType;
+  }
+
   get template() {
-    return createSortTripEventsTemplate();
+    return createSortTripEventsTemplate(this.#currentSortType);
   }
 
   setSortTypeChangeHandler = (callback) => {
@@ -45,6 +52,7 @@ export default class SortTripEventsView extends AbstractView {
       return;
     }
 
+    evt.preventDefault();
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   }
 }

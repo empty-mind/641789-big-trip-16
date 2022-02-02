@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import AbstractView from './abstract-view.js';
 
 const createTripInfoTemplate = (dataArray) => {
@@ -18,8 +19,8 @@ const createTripInfoTemplate = (dataArray) => {
 
   const renderTripInfoDates = () => (
     `<p class="trip-info__dates">
-    ${dataArray[0].dateFrom.format('MMM DD').toUpperCase()}&nbsp;&mdash;&nbsp;
-    ${dataArray[0].dateTo.format('MMM DD').toUpperCase()}
+    ${dayjs(dataArray[0].dateFrom).format('MMM DD')}&nbsp;&mdash;&nbsp;
+    ${dayjs(dataArray[dataArray.length - 1].dateTo).format('MMM DD')}
     </p>`
   );
 

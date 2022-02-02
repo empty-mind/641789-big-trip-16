@@ -18,17 +18,15 @@ export default class SiteMenuView extends AbstractView {
     this.element.addEventListener('click', this.#menuClickHandler);
   }
 
-  #menuClickHandler = (evt) => {
-    const menu = this.element.querySelectorAll('.trip-tabs__btn');
-    const activeBtn = evt.target;
-
-    if (activeBtn.classList.contains('trip-tabs__btn--active')) {
-      return;
+  setMenuItem = (menuItem) => {
+    const item = this.element.querySelector(`[data-menu-item="${menuItem}"]`);
+    if (item !== null) {
+      item.classList.add('trip-tabs__btn--active');
     }
+  }
 
-    menu.forEach((item) => item.classList.remove('trip-tabs__btn--active'));
-    activeBtn.classList.add('trip-tabs__btn--active');
-
+  #menuClickHandler = (evt) => {
+    evt.preventDefault();
     this._callback.menuClick(evt.target.dataset.menuItem);
   }
 }
