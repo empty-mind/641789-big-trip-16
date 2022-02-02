@@ -89,7 +89,7 @@ export default class ApiService {
       'is_favorite': tripEvent.isFavorite,
     };
 
-    delete adaptedTripEvent.price;
+    delete adaptedTripEvent.basePrice;
     delete adaptedTripEvent.dateFrom;
     delete adaptedTripEvent.dateTo;
     delete adaptedTripEvent.isFavorite;

@@ -52,7 +52,7 @@ export default class TripEventsModel extends AbstractObservable {
 
       this.#tripEvents = [
         ...this.#tripEvents.slice(0, index),
-        update,
+        updatedTripEvent,
         ...this.#tripEvents.slice(index + 1),
       ];
 
