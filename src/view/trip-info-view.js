@@ -28,7 +28,7 @@ const createTripInfoTemplate = (dataArray) => {
     let result = 0;
 
     for (let index = 0; index < dataArray.length - 1; index++){
-      result += dataArray[index].basePrice;
+      result += dataArray[index].basePrice + dataArray[index].offers.reduce((sum, offer) => sum + offer.price, 0);
     }
 
     return result;

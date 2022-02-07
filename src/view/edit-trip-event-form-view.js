@@ -285,7 +285,7 @@ export default class EditTripEventFormView extends SmartView {
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(EditTripEventFormView.parseDataToTripEvent(this._data));
+    this._callback.deleteClick(EditTripEventFormView.parseDataToTripEvent(this._data));
   }
 
   setCloseClickHandler = (callback) => {

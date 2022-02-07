@@ -29,7 +29,7 @@ export default class ApiService {
       .then(ApiService.parseResponse);
   }
 
-  updatePoint = async (tripEvent) => {
+  updateTripEvent = async (tripEvent) => {
     const response = await this.#load({
       url:  `points/${tripEvent.id}`,
       method: Method.PUT,
