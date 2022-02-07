@@ -14,7 +14,7 @@ export const UpdateType = {
 export const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
-  PAST: 'past'
+  PAST: 'past',
 };
 
 export const UserAction = {
@@ -26,7 +26,7 @@ export const UserAction = {
 export const MenuItem = {
   TABLE: 'TABLE',
   STATS: 'STATS',
-  NEW_EVENT: 'NEW_EVENT'
+  NEW_EVENT: 'NEW_EVENT',
 };
 
 export const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
